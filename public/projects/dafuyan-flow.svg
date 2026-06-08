@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 480" width="100%" role="img">
+  <title>达肤妍话术搜索流程图</title>
+  <desc>用户搜索全流程：输入 → 解析 → 四路召回 → RRF融合 → ReRank → 展示</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+      markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: -apple-system, system-ui, sans-serif; }
+    .t { font-size: 14px; font-weight: 500; fill: #2C2C2A; }
+    .ts { font-size: 12px; font-weight: 400; fill: #5F5E5A; }
+    .tc { font-size: 11px; font-weight: 400; fill: #888780; }
+    .box { fill: #fff; stroke: #B4B2A9; stroke-width: 0.5; }
+    .box-teal { fill: #E1F5EE; stroke: #0F6E56; stroke-width: 0.5; }
+    .box-purple { fill: #EEEDFE; stroke: #534AB7; stroke-width: 0.5; }
+    .box-amber { fill: #FAEEDA; stroke: #854F0B; stroke-width: 0.5; }
+    .box-coral { fill: #FAECE7; stroke: #993C1D; stroke-width: 0.5; }
+    .arr { fill: none; stroke: #5F5E5A; stroke-width: 1; marker-end: url(#arrow); }
+    .step-num { font-size: 12px; font-weight: 500; fill: #fff; }
+    .circle { fill: #534AB7; }
+  </style>
+
+  <text x="340" y="25" text-anchor="middle" class="t">话术搜索完整流程</text>
+
+  <rect x="130" y="45" width="420" height="40" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+  <text x="340" y="62" text-anchor="middle" class="t">"客户问我用 B5 面膜过敏了怎么办"</text>
+  <text x="340" y="78" text-anchor="middle" class="tc">客服输入自然语言查询</text>
+
+  <line x1="340" y1="85" x2="340" y2="110" class="arr"/>
+
+  <circle cx="80" cy="125" r="16" class="circle"/>
+  <text x="80" y="130" text-anchor="middle" class="step-num">1</text>
+  <text x="80" y="157" text-anchor="middle" class="ts">查询解析</text>
+  <rect x="120" y="112" width="200" height="26" rx="6" class="box"/>
+  <text x="220" y="129" text-anchor="middle" class="ts">同义词扩展 · 实体识别 · 意图分类</text>
+
+  <line x1="320" y1="125" x2="130" y2="190" class="arr"/>
+  <line x1="320" y1="125" x2="340" y2="190" class="arr"/>
+  <line x1="320" y1="125" x2="550" y2="190" class="arr"/>
+
+  <circle cx="80" cy="205" r="16" class="circle"/>
+  <text x="80" y="210" text-anchor="middle" class="step-num">2</text>
+  <text x="80" y="237" text-anchor="middle" class="ts">BM25</text>
+  <rect x="30" y="190" width="100" height="22" rx="5" class="box-teal"/>
+  <text x="80" y="205" text-anchor="middle" class="tc">k1=1.5, 2-gram</text>
+
+  <circle cx="260" cy="205" r="16" class="circle"/>
+  <text x="260" y="210" text-anchor="middle" class="step-num">3</text>
+  <text x="260" y="237" text-anchor="middle" class="ts">Pipeline</text>
+  <rect x="210" y="190" width="100" height="22" rx="5" class="box-teal"/>
+  <text x="260" y="205" text-anchor="middle" class="tc">9 个 source</text>
+
+  <circle cx="450" cy="205" r="16" class="circle"/>
+  <text x="450" y="210" text-anchor="middle" class="step-num">4</text>
+  <text x="450" y="237" text-anchor="middle" class="ts">TF-IDF</text>
+  <rect x="400" y="190" width="100" height="22" rx="5" class="box-teal"/>
+  <text x="450" y="205" text-anchor="middle" class="tc">8163 词词典</text>
+
+  <circle cx="620" cy="205" r="16" class="circle"/>
+  <text x="620" y="210" text-anchor="middle" class="step-num">5</text>
+  <text x="620" y="237" text-anchor="middle" class="ts">精确匹配</text>
+  <rect x="570" y="190" width="100" height="22" rx="5" class="box-teal"/>
+  <text x="620" y="205" text-anchor="middle" class="tc">search_questions</text>
+
+  <line x1="80" y1="245" x2="340" y2="275" class="arr"/>
+  <line x1="260" y1="245" x2="340" y2="275" class="arr"/>
+  <line x1="450" y1="245" x2="340" y2="275" class="arr"/>
+  <line x1="620" y1="245" x2="340" y2="275" class="arr"/>
+
+  <rect x="215" y="275" width="250" height="32" rx="10" class="box-purple"/>
+  <text x="340" y="296" text-anchor="middle" class="t">RRF 融合 (k=60)</text>
+
+  <line x1="340" y1="307" x2="340" y2="335" class="arr"/>
+
+  <rect x="180" y="335" width="320" height="50" rx="10" class="box-coral"/>
+  <text x="340" y="355" text-anchor="middle" class="t">过滤链 + 安全兜底</text>
+  <text x="340" y="373" text-anchor="middle" class="tc">去重 · 过敏场景推销过滤 · 敏感词(根治/100%/绝对) · 平台过滤</text>
+
+  <line x1="340" y1="385" x2="340" y2="410" class="arr"/>
+
+  <rect x="180" y="410" width="320" height="55" rx="10" class="box-amber"/>
+  <text x="340" y="430" text-anchor="middle" class="t">结果展示</text>
+  <text x="340" y="447" text-anchor="middle" class="tc">意图标签(成分咨询/产品推荐/...) · 关键词高亮 · 一键复制 · 点击即用</text>
+</svg>

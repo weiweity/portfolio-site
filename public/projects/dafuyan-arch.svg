@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 520" width="100%" role="img">
+  <title>达肤妍话术检索系统架构图</title>
+  <desc>飞书 Excel → JSON 知识库 → FastAPI 后端 → 前端搜索引擎(四路 RRF 融合)</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+      markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: -apple-system, system-ui, sans-serif; }
+    .t { font-size: 14px; font-weight: 500; fill: #2C2C2A; }
+    .ts { font-size: 12px; font-weight: 400; fill: #5F5E5A; }
+    .tc { font-size: 11px; font-weight: 400; fill: #888780; }
+    .box-purple { fill: #EEEDFE; stroke: #534AB7; stroke-width: 0.5; }
+    .box-teal { fill: #E1F5EE; stroke: #0F6E56; stroke-width: 0.5; }
+    .box-blue { fill: #E6F1FB; stroke: #185FA5; stroke-width: 0.5; }
+    .box-amber { fill: #FAEEDA; stroke: #854F0B; stroke-width: 0.5; }
+    .container { fill: #F1EFE8; stroke: #B4B2A9; stroke-width: 0.5; rx: 12; }
+    .arr { fill: none; stroke: #5F5E5A; stroke-width: 1; marker-end: url(#arrow); }
+  </style>
+
+  <text x="340" y="25" text-anchor="middle" class="t">达肤妍客服话术检索系统 — 架构全景</text>
+
+  <rect x="25" y="40" width="630" height="75" class="container" rx="10"/>
+  <text x="45" y="62" class="t">话术内容维护</text>
+  <rect x="45" y="72" width="140" height="32" rx="8" class="box-amber"/>
+  <text x="115" y="93" text-anchor="middle" class="ts">飞书 Excel 维护</text>
+  <text x="200" y="93" class="tc">→ 话术师导出</text>
+  <rect x="310" y="72" width="140" height="32" rx="8" class="box-purple"/>
+  <text x="380" y="93" text-anchor="middle" class="ts">Excel→JSON 清洗</text>
+  <text x="465" y="93" class="tc">→</text>
+  <rect x="480" y="72" width="155" height="32" rx="8" class="box-teal"/>
+  <text x="557" y="93" text-anchor="middle" class="ts">1072 条 JSON 话术库</text>
+
+  <line x1="340" y1="115" x2="340" y2="140" class="arr"/>
+
+  <rect x="25" y="140" width="630" height="90" class="container" rx="10"/>
+  <text x="45" y="162" class="t">后端 FastAPI（端口 8767）</text>
+  <rect x="45" y="172" width="160" height="48" rx="8" class="box-blue"/>
+  <text x="125" y="192" text-anchor="middle" class="ts">DataStore 单例</text>
+  <text x="125" y="209" text-anchor="middle" class="tc">3种异构JSON归一化</text>
+  <rect x="225" y="172" width="140" height="48" rx="8" class="box-blue"/>
+  <text x="295" y="192" text-anchor="middle" class="ts">FAISS 向量索引</text>
+  <text x="295" y="209" text-anchor="middle" class="tc">768维 · text2vec</text>
+  <rect x="385" y="172" width="120" height="48" rx="8" class="box-blue"/>
+  <text x="445" y="192" text-anchor="middle" class="ts">审批流 + Excel导入</text>
+  <text x="445" y="209" text-anchor="middle" class="tc">pending_approvals</text>
+  <rect x="525" y="172" width="110" height="48" rx="8" class="box-blue"/>
+  <text x="580" y="192" text-anchor="middle" class="ts">PubMed 搜索</text>
+  <text x="580" y="209" text-anchor="middle" class="tc">皮肤学术</text>
+
+  <line x1="340" y1="230" x2="340" y2="260" class="arr"/>
+
+  <rect x="25" y="260" width="630" height="240" class="container" rx="10"/>
+  <text x="45" y="282" class="t">前端搜索引擎（浏览器内 · Vanilla JS · 零延迟）</text>
+
+  <rect x="45" y="295" width="130" height="40" rx="8" class="box-purple"/>
+  <text x="110" y="312" text-anchor="middle" class="ts">QueryParser</text>
+  <text x="110" y="327" text-anchor="middle" class="tc">意图/实体/同义词</text>
+
+  <text x="190" y="318" class="tc">→</text>
+
+  <rect x="210" y="290" width="400" height="50" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+  <text x="410" y="308" text-anchor="middle" class="t">四路 RRF 融合召回</text>
+
+  <rect x="220" y="348" width="85" height="36" rx="6" class="box-teal"/>
+  <text x="262" y="363" text-anchor="middle" class="ts">FAISS 语义</text>
+  <text x="262" y="377" text-anchor="middle" class="tc">权重 0.45</text>
+
+  <rect x="318" y="348" width="85" height="36" rx="6" class="box-teal"/>
+  <text x="360" y="363" text-anchor="middle" class="ts">BM25 关键词</text>
+  <text x="360" y="377" text-anchor="middle" class="tc">权重 0.25</text>
+
+  <rect x="416" y="348" width="85" height="36" rx="6" class="box-teal"/>
+  <text x="458" y="363" text-anchor="middle" class="ts">精确匹配</text>
+  <text x="458" y="377" text-anchor="middle" class="tc">权重 0.20</text>
+
+  <rect x="514" y="348" width="85" height="36" rx="6" class="box-teal"/>
+  <text x="556" y="363" text-anchor="middle" class="ts">TF-IDF</text>
+  <text x="556" y="377" text-anchor="middle" class="tc">权重 0.10</text>
+
+  <line x1="410" y1="384" x2="410" y2="400" class="arr"/>
+
+  <rect x="295" y="400" width="230" height="30" rx="8" class="box-amber"/>
+  <text x="410" y="420" text-anchor="middle" class="ts">ReRank 语义重排 (lambda=0.4)</text>
+
+  <line x1="410" y1="430" x2="410" y2="448" class="arr"/>
+
+  <rect x="295" y="448" width="230" height="42" rx="8" class="box-blue"/>
+  <text x="410" y="466" text-anchor="middle" class="ts">Top20 结果 → 过滤 → 渲染卡片</text>
+  <text x="410" y="482" text-anchor="middle" class="tc">关键词高亮 · 语义解析 · 平台过滤</text>
+</svg>

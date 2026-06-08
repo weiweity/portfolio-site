@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 640" width="100%" role="img">
+  <title>芙清 CRM 系统架构图</title>
+  <desc>三段式架构：语义层 → 契约层 → 服务层，数据从 Excel 经 ETL 入 DuckDB，经 API 到前端和飞书</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+      markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: -apple-system, system-ui, sans-serif; }
+    .t { font-size: 14px; font-weight: 500; fill: #2C2C2A; }
+    .ts { font-size: 12px; font-weight: 400; fill: #5F5E5A; }
+    .tc { font-size: 11px; font-weight: 400; fill: #888780; }
+    .box-blue { fill: #E6F1FB; stroke: #185FA5; stroke-width: 0.5; }
+    .box-teal { fill: #E1F5EE; stroke: #0F6E56; stroke-width: 0.5; }
+    .box-amber { fill: #FAEEDA; stroke: #854F0B; stroke-width: 0.5; }
+    .box-purple { fill: #EEEDFE; stroke: #534AB7; stroke-width: 0.5; }
+    .box-coral { fill: #FAECE7; stroke: #993C1D; stroke-width: 0.5; }
+    .container { fill: #F1EFE8; stroke: #B4B2A9; stroke-width: 0.5; rx: 12; }
+    .arr { fill: none; stroke: #5F5E5A; stroke-width: 1; marker-end: url(#arrow); }
+  </style>
+
+  <rect x="20" y="15" width="640" height="610" class="container" rx="16"/>
+
+  <text x="340" y="42" text-anchor="middle" class="t">芙清 CRM 客户分析系统 — 三段式架构</text>
+
+  <rect x="35" y="55" width="610" height="75" class="container" rx="10"/>
+  <text x="55" y="75" class="t">数据输入层</text>
+  <rect x="55" y="84" width="130" height="36" rx="8" class="box-amber"/>
+  <text x="120" y="107" text-anchor="middle" class="t">店铺订单 .xlsx</text>
+  <rect x="205" y="84" width="130" height="36" rx="8" class="box-amber"/>
+  <text x="270" y="107" text-anchor="middle" class="t">会员数据库 .xlsx</text>
+  <rect x="355" y="84" width="130" height="36" rx="8" class="box-amber"/>
+  <text x="420" y="107" text-anchor="middle" class="t">DMP 爬虫 CSV</text>
+  <rect x="505" y="84" width="130" height="36" rx="8" class="box-coral"/>
+  <text x="570" y="107" text-anchor="middle" class="t">SPU/渠道/淘客</text>
+
+  <line x1="340" y1="130" x2="340" y2="150" class="arr"/>
+
+  <rect x="35" y="150" width="610" height="65" class="container" rx="10"/>
+  <text x="55" y="170" class="t">ETL 数据处理</text>
+  <rect x="55" y="178" width="100" height="28" rx="6" class="box-teal"/>
+  <text x="105" y="197" text-anchor="middle" class="ts">ingest 加载</text>
+  <text x="170" y="188" class="ts">→</text>
+  <rect x="185" y="178" width="100" height="28" rx="6" class="box-teal"/>
+  <text x="235" y="197" text-anchor="middle" class="ts">transform 清洗</text>
+  <text x="300" y="188" class="ts">→</text>
+  <rect x="315" y="178" width="100" height="28" rx="6" class="box-teal"/>
+  <text x="365" y="197" text-anchor="middle" class="ts">load 写入</text>
+  <rect x="440" y="178" width="90" height="28" rx="6" class="box-coral"/>
+  <text x="485" y="197" text-anchor="middle" class="ts">6 道门禁</text>
+  <text x="550" y="197" class="tc">launchd 每日 8:30</text>
+
+  <line x1="340" y1="215" x2="340" y2="235" class="arr"/>
+
+  <rect x="220" y="235" width="240" height="45" rx="10" class="box-amber"/>
+  <text x="340" y="255" text-anchor="middle" class="t">DuckDB 55GB 单例数据库</text>
+  <text x="340" y="272" text-anchor="middle" class="tc">1030万订单 · 410万用户 · 线程安全连接</text>
+
+  <line x1="220" y1="257" x2="160" y2="310" class="arr"/>
+  <line x1="340" y1="280" x2="340" y2="310" class="arr"/>
+  <line x1="460" y1="257" x2="520" y2="310" class="arr"/>
+
+  <rect x="45" y="310" width="230" height="100" class="container" rx="10"/>
+  <text x="65" y="330" class="t">语义层 Semantic</text>
+  <text x="65" y="347" class="tc">业务口径唯一真实数据源</text>
+  <rect x="65" y="354" width="95" height="22" rx="5" class="box-purple"/>
+  <text x="112" y="369" text-anchor="middle" class="ts">filters 过滤</text>
+  <rect x="168" y="354" width="95" height="22" rx="5" class="box-purple"/>
+  <text x="215" y="369" text-anchor="middle" class="ts">metrics 指标</text>
+  <rect x="65" y="380" width="95" height="22" rx="5" class="box-purple"/>
+  <text x="112" y="395" text-anchor="middle" class="ts">segments 分层</text>
+  <rect x="168" y="380" width="95" height="22" rx="5" class="box-purple"/>
+  <text x="215" y="395" text-anchor="middle" class="ts">channels 渠道</text>
+
+  <rect x="405" y="310" width="230" height="100" class="container" rx="10"/>
+  <text x="425" y="330" class="t">契约层 Contracts</text>
+  <text x="425" y="347" class="tc">Pydantic Schema 接口契约</text>
+  <rect x="425" y="354" width="95" height="22" rx="5" class="box-purple"/>
+  <text x="472" y="369" text-anchor="middle" class="ts">135+ Schema</text>
+  <rect x="528" y="354" width="95" height="22" rx="5" class="box-purple"/>
+  <text x="575" y="369" text-anchor="middle" class="ts">OpenAPI 文档</text>
+  <text x="520" y="400" class="tc">Pydantic → FastAPI → TypeScript</text>
+
+  <line x1="275" y1="360" x2="405" y2="360" class="arr"/>
+
+  <line x1="160" y1="410" x2="160" y2="435" class="arr"/>
+  <line x1="520" y1="410" x2="520" y2="435" class="arr"/>
+
+  <rect x="45" y="435" width="590" height="55" class="container" rx="10"/>
+  <text x="65" y="455" class="t">服务层 Services（6 大包 + 4 单文件 · 业务逻辑实现）</text>
+  <rect x="65" y="462" width="72" height="20" rx="4" class="box-teal"/>
+  <text x="101" y="476" text-anchor="middle" class="ts">health</text>
+  <rect x="144" y="462" width="52" height="20" rx="4" class="box-teal"/>
+  <text x="170" y="476" text-anchor="middle" class="ts">rfm</text>
+  <rect x="203" y="462" width="72" height="20" rx="4" class="box-teal"/>
+  <text x="239" y="476" text-anchor="middle" class="ts">category</text>
+  <rect x="282" y="462" width="65" height="20" rx="4" class="box-teal"/>
+  <text x="314" y="476" text-anchor="middle" class="ts">metrics</text>
+  <rect x="354" y="462" width="72" height="20" rx="4" class="box-teal"/>
+  <text x="390" y="476" text-anchor="middle" class="ts">flow/geo</text>
+  <rect x="433" y="462" width="52" height="20" rx="4" class="box-teal"/>
+  <text x="459" y="476" text-anchor="middle" class="ts">churn</text>
+  <rect x="492" y="462" width="65" height="20" rx="4" class="box-teal"/>
+  <text x="524" y="476" text-anchor="middle" class="ts">export</text>
+
+  <line x1="340" y1="490" x2="340" y2="515" class="arr"/>
+
+  <rect x="85" y="515" width="510" height="45" class="container" rx="10"/>
+  <text x="105" y="535" class="t">路由层 Routers（16 个 API 端点 · Bearer Token 鉴权 · 安全响应头）</text>
+  <text x="105" y="552" class="tc">FastAPI → CORS → /api/v1/auth → /api/v1/customer-health → /api/v1/metrics → ...</text>
+
+  <line x1="220" y1="560" x2="180" y2="590" class="arr"/>
+  <line x1="460" y1="560" x2="500" y2="590" class="arr"/>
+
+  <rect x="55" y="588" width="200" height="36" rx="8" class="box-blue"/>
+  <text x="155" y="611" text-anchor="middle" class="t">Vue 3 前端 · ECharts 5</text>
+  <rect x="425" y="588" width="200" height="36" rx="8" class="box-blue"/>
+  <text x="525" y="611" text-anchor="middle" class="t">飞书每日推送 · 9:00</text>
+</svg>

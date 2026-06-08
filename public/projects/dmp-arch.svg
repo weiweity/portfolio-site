@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 520" width="100%" role="img">
+  <title>达摩盘 DMP 数据采集架构图</title>
+  <desc>三层架构：Master调度层 → 三大模块 → CSV数据 → 前端同步，10层反检测 + 6道门禁</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+      markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: -apple-system, system-ui, sans-serif; }
+    .t { font-size: 14px; font-weight: 500; fill: #2C2C2A; }
+    .ts { font-size: 12px; font-weight: 400; fill: #5F5E5A; }
+    .tc { font-size: 11px; font-weight: 400; fill: #888780; }
+    .box-coral { fill: #FAECE7; stroke: #993C1D; stroke-width: 0.5; }
+    .box-teal { fill: #E1F5EE; stroke: #0F6E56; stroke-width: 0.5; }
+    .box-amber { fill: #FAEEDA; stroke: #854F0B; stroke-width: 0.5; }
+    .box-blue { fill: #E6F1FB; stroke: #185FA5; stroke-width: 0.5; }
+    .box-purple { fill: #EEEDFE; stroke: #534AB7; stroke-width: 0.5; }
+    .container { fill: #F1EFE8; stroke: #B4B2A9; stroke-width: 0.5; rx: 12; }
+    .arr { fill: none; stroke: #5F5E5A; stroke-width: 1; marker-end: url(#arrow); }
+  </style>
+
+  <text x="340" y="25" text-anchor="middle" class="t">达摩盘 DMP 数据自动采集系统</text>
+
+  <rect x="25" y="40" width="630" height="55" class="container" rx="10"/>
+  <text x="45" y="62" class="t">浏览器层</text>
+  <rect x="45" y="70" width="180" height="18" rx="5" class="box-coral"/>
+  <text x="135" y="83" text-anchor="middle" class="ts">Chromium + launch_persistent_context</text>
+  <rect x="240" y="70" width="130" height="18" rx="5" class="box-coral"/>
+  <text x="305" y="83" text-anchor="middle" class="ts">chrome_profile 登录态</text>
+  <rect x="385" y="70" width="110" height="18" rx="5" class="box-coral"/>
+  <text x="440" y="83" text-anchor="middle" class="ts">10 层反检测</text>
+  <rect x="510" y="70" width="125" height="18" rx="5" class="box-coral"/>
+  <text x="572" y="83" text-anchor="middle" class="ts">贝塞尔曲线鼠标</text>
+
+  <line x1="340" y1="95" x2="340" y2="120" class="arr"/>
+
+  <rect x="25" y="120" width="630" height="55" class="container" rx="10"/>
+  <text x="45" y="142" class="t">Master 调度层 · dmp_master.py</text>
+  <rect x="45" y="150" width="105" height="18" rx="5" class="box-blue"/>
+  <text x="97" y="163" text-anchor="middle" class="ts">--assets 资产诊断</text>
+  <rect x="162" y="150" width="100" height="18" rx="5" class="box-blue"/>
+  <text x="212" y="163" text-anchor="middle" class="ts">--flow 流转数据</text>
+  <rect x="274" y="150" width="100" height="18" rx="5" class="box-blue"/>
+  <text x="324" y="163" text-anchor="middle" class="ts">--items 单品洞察</text>
+  <rect x="386" y="150" width="80" height="18" rx="5" class="box-purple"/>
+  <text x="426" y="163" text-anchor="middle" class="ts">崩溃恢复</text>
+  <rect x="478" y="150" width="80" height="18" rx="5" class="box-purple"/>
+  <text x="518" y="163" text-anchor="middle" class="ts">60s 重试</text>
+  <text x="570" y="163" class="tc">missing dates</text>
+
+  <line x1="160" y1="175" x2="130" y2="215" class="arr"/>
+  <line x1="340" y1="175" x2="300" y2="215" class="arr"/>
+  <line x1="490" y1="175" x2="550" y2="215" class="arr"/>
+
+  <rect x="25" y="215" width="200" height="85" class="container" rx="10"/>
+  <text x="45" y="237" class="t">资产诊断</text>
+  <text x="45" y="254" class="tc">dmp_scraper.py</text>
+  <text x="45" y="272" class="ts">Y轴锚点 + 距离优先DOM</text>
+  <text x="45" y="290" class="tc">8字段 · 全同值检测</text>
+
+  <rect x="240" y="215" width="200" height="85" class="container" rx="10"/>
+  <text x="260" y="237" class="t">流转数据</text>
+  <text x="260" y="254" class="tc">dmp_flow_scraper.py</text>
+  <text x="260" y="272" class="ts">API拦截 + DOM混合</text>
+  <text x="260" y="290" class="tc">statusId=0 特殊处理</text>
+
+  <rect x="455" y="215" width="200" height="85" class="container" rx="10"/>
+  <text x="475" y="237" class="t">单品洞察</text>
+  <text x="475" y="254" class="tc">dmp_item_insight_scraper.py</text>
+  <text x="475" y="272" class="ts">API拦截 · 四阶段轮询</text>
+  <text x="475" y="290" class="tc">15 SKU · Date Sanity</text>
+
+  <line x1="125" y1="300" x2="125" y2="330" class="arr"/>
+  <line x1="340" y1="300" x2="340" y2="330" class="arr"/>
+  <line x1="555" y1="300" x2="555" y2="330" class="arr"/>
+
+  <rect x="25" y="330" width="630" height="65" class="container" rx="10"/>
+  <text x="45" y="352" class="t">6 道数据质量门禁 (sanity_check.py)</text>
+  <text x="45" y="370" class="tc">1.业务平滑性  2.基础校验  3.复制日检测  4.API健康  5.跨日检验  6.Date Sanity</text>
+  <text x="45" y="388" class="tc">data_quality_flag: verified / legacy / likely-wrong</text>
+
+  <line x1="340" y1="395" x2="340" y2="415" class="arr"/>
+
+  <rect x="100" y="415" width="130" height="40" rx="10" class="box-amber"/>
+  <text x="165" y="433" text-anchor="middle" class="t">data.csv 流转</text>
+  <text x="165" y="449" text-anchor="middle" class="tc">10列 · 8阶段</text>
+
+  <rect x="275" y="415" width="130" height="40" rx="10" class="box-amber"/>
+  <text x="340" y="433" text-anchor="middle" class="t">data2.csv 资产</text>
+  <text x="340" y="449" text-anchor="middle" class="tc">9列 · AIPL</text>
+
+  <rect x="450" y="415" width="130" height="40" rx="10" class="box-amber"/>
+  <text x="515" y="433" text-anchor="middle" class="t">data3.csv 单品</text>
+  <text x="515" y="449" text-anchor="middle" class="tc">7040行·9列·append-only</text>
+
+  <line x1="340" y1="455" x2="340" y2="485" class="arr"/>
+
+  <rect x="215" y="485" width="250" height="28" rx="8" class="box-blue"/>
+  <text x="340" y="504" text-anchor="middle" class="ts">自动同步 → 前端 CRM 看板</text>
+</svg>
