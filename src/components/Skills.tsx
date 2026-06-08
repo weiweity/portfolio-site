@@ -350,9 +350,6 @@ export function Skills() {
         >
           ← 悬停暂停 · 拖拽滑动 · 点击箭头导航 →
         </p>
-
-        {/* ── 教育背景 ── */}
-        <Education />
       </div>
     </section>
   );
@@ -384,65 +381,5 @@ function renderSep() {
     >
       ◆
     </span>
-  );
-}
-
-/* ═══════════════════════════════════════════════════
-   Education — 教育背景（不变）
-   ═══════════════════════════════════════════════════ */
-function Education() {
-  return (
-    <div
-      className="reveal mt-12 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 rounded-2xl p-6 md:p-7"
-      style={{
-        background: "var(--bg-base)",
-        border: "1px solid var(--border-subtle)",
-      }}
-    >
-      <div
-        className="h-10 w-10 rounded-full flex items-center justify-center shrink-0"
-        style={{
-          background: "var(--brand-orange)",
-          color: "#FFFFFF",
-        }}
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className="h-5 w-5"
-          aria-hidden="true"
-        >
-          <path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3zm0 8.18L5.18 9 12 5.82 18.82 9 12 11.18zM5 13.39v3.7c0 1.5 3.13 2.91 7 2.91s7-1.41 7-2.91v-3.7l-7 3.82-7-3.82z" />
-        </svg>
-      </div>
-      <div className="flex-1 min-w-0">
-        <p
-          className="text-xs font-mono tracking-widest uppercase mb-1"
-          style={{ color: "var(--brand-orange)" }}
-        >
-          / Education
-        </p>
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <span
-            className="font-display text-lg font-semibold"
-            style={{ color: "var(--text-primary)" }}
-          >
-            宁波财经学院
-          </span>
-          <span
-            className="text-sm"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            · 电子商务（本科）
-          </span>
-        </div>
-      </div>
-      <div
-        className="font-mono text-sm shrink-0"
-        style={{ color: "var(--text-tertiary)" }}
-      >
-        2020.09 — 2022.06
-      </div>
-    </div>
   );
 }
