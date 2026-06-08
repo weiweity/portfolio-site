@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { ChevronDown, Menu, BookOpen } from "lucide-react";
 import type { ProjectDetail, Chapter } from "../../data/projectDetails";
 
@@ -59,8 +59,8 @@ export function ProjectSidebar({ project }: { project: ProjectDetail }) {
               const isActive = activeId === ch.id;
               return (
                 <li key={ch.id}>
-                  <Link
-                    to={`#chapter-${ch.id}`}
+                  <a
+                    href={`#chapter-${ch.id}`}
                     onClick={() => {
                       setActiveId(ch.id);
                       setMobileOpen(false);
@@ -75,7 +75,7 @@ export function ProjectSidebar({ project }: { project: ProjectDetail }) {
                       {ch.id}
                     </span>
                     {ch.title}
-                  </Link>
+                  </a>
                 </li>
               );
             })}

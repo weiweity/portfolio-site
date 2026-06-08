@@ -32,7 +32,7 @@ function ChapterSection({
   return (
     <section
       id={`chapter-${ch.id}`}
-      className="mb-16 scroll-mt-20"
+      className="mb-16 scroll-mt-24"
     >
       <nav className="text-xs text-gray-600 mb-3 flex items-center gap-1.5">
         <a href="#" className="text-[var(--brand-orange)] hover:underline">
