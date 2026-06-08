@@ -32,7 +32,7 @@ export function Hero() {
               className="reveal mt-6 text-base md:text-lg leading-relaxed text-pretty"
               style={{ color: "var(--text-secondary)" }}
             >
-              5 年护肤电商用户运营 + 1 年 AI 落地实战。前芙清，让 3 人编制顶 5 人产出；主导 0-1 搭建企业级数据中台（1030 万订单）、RAG 客服培训系统、AI 赋能工作流矩阵。
+              5 年护肤电商用户运营 + 1 年 AI 落地实战，开发预策ai agent。前芙清，让 3 人编制顶 5 人产出；主导 0-1 搭建企业级数据中台（1030 万订单）、RAG 客服培训系统、AI 赋能工作流矩阵。
             </p>
 
             {/* 数字徽章 */}

@@ -407,6 +407,26 @@
   .text-balance { text-wrap: balance; }
   .text-pretty { text-wrap: pretty; }
   .container-shell { max-width: 1200px; margin-left: auto; margin-right: auto; }
+
+  /* 隐藏原生滚动条（水平滚动区域） */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 技能标签悬停效果 */
+  .skill-tag {
+    border: 1px solid transparent;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s ease;
+  }
+  .skill-tag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px -2px rgba(216, 106, 58, 0.18);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

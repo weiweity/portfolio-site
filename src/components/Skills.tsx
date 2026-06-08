@@ -1,32 +1,301 @@
+import {
+  useEffect,
+  useRef,
+  useCallback,
+  Fragment,
+  useState,
+} from "react";
 import { SKILLS } from "../lib/data";
-import { Sparkles, Cpu, Bot, Users2, ShoppingBag } from "lucide-react";
+import {
+  Sparkles,
+  Cpu,
+  Bot,
+  Users2,
+  ShoppingBag,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
-const ICONS: Record<string, typeof Sparkles> = {
+/* ─── Category icons ─── */
+const CATEGORY_ICONS: Record<string, typeof Sparkles> = {
   "AI Agent 编排": Bot,
-  "技术": Cpu,
-  "大模型": Sparkles,
-  "用户运营": Users2,
-  "电商工具": ShoppingBag,
+  技术: Cpu,
+  大模型: Sparkles,
+  用户运营: Users2,
+  电商工具: ShoppingBag,
 };
 
-const PRIORITY_STYLES: Record<string, { bg: string; text: string; border: string }> = {
-  "主力": {
+/* ─── Priority visual config ─── */
+const PRIORITY_CFG: Record<
+  string,
+  { bg: string; text: string; border: string; badgeBg: string; badgeText: string }
+> = {
+  主力: {
     bg: "var(--brand-orange)",
     text: "#FFFFFF",
     border: "var(--brand-orange)",
+    badgeBg: "rgba(255,255,255,0.22)",
+    badgeText: "#FFFFFF",
   },
-  "熟练": {
-    bg: "transparent",
+  熟练: {
+    bg: "rgba(216, 106, 58, 0.06)",
     text: "var(--brand-orange)",
     border: "var(--brand-orange)",
+    badgeBg: "rgba(232, 119, 35, 0.10)",
+    badgeText: "var(--brand-orange)",
   },
-  "了解": {
+  了解: {
     bg: "transparent",
     text: "var(--text-tertiary)",
     border: "var(--border-strong)",
+    badgeBg: "var(--bg-base)",
+    badgeText: "var(--text-tertiary)",
   },
 };
 
+/* ═══════════════════════════════════════════════════
+   SkillTag — 单个技能标签
+   ═══════════════════════════════════════════════════ */
+function SkillTag({
+  name,
+  priority,
+  usage,
+}: {
+  name: string;
+  priority: "主力" | "熟练" | "了解";
+  usage?: string;
+}) {
+  const c = PRIORITY_CFG[priority];
+  return (
+    <span
+      className="skill-tag shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-medium"
+      title={usage ? `${name}（${usage}）` : name}
+    >
+      <span className="font-mono">{name}</span>
+      {usage && (
+        <span
+          className="text-[10px] opacity-70"
+          style={{
+            color: priority === "主力" ? "rgba(255,255,255,0.85)" : "var(--text-tertiary)",
+          }}
+        >
+          · {usage}
+        </span>
+      )}
+      <span
+        className="ml-0.5 text-[10px] font-mono px-1.5 py-0.5 rounded-full whitespace-nowrap"
+        style={{ background: c.badgeBg, color: c.badgeText }}
+      >
+        {priority}
+      </span>
+    </span>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   CategoryHeader — 分类标题胶囊
+   ═══════════════════════════════════════════════════ */
+function CategoryHeader({ category }: { category: string }) {
+  const Icon = CATEGORY_ICONS[category] || Sparkles;
+  return (
+    <div
+      className="shrink-0 inline-flex items-center gap-1.5 pl-2.5 pr-3 py-2 rounded-full"
+      style={{
+        background: "var(--bg-base)",
+        border: "1px solid var(--border-subtle)",
+      }}
+    >
+      <Icon className="h-3.5 w-3.5" style={{ color: "var(--brand-orange)" }} />
+      <span
+        className="text-xs font-semibold whitespace-nowrap"
+        style={{ color: "var(--text-primary)" }}
+      >
+        {category}
+      </span>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   ScrollRow — 单行水平滚动 + 自动弹跳动画
+   ═══════════════════════════════════════════════════ */
+function ScrollRow({
+  children,
+  speed = 0.5,
+  initialDir = 1,
+  className = "",
+}: {
+  children: React.ReactNode;
+  speed?: number;
+  initialDir?: number;
+  className?: string;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const animRef = useRef(0);
+  const dirRef = useRef(initialDir);
+  const pausedRef = useRef(false);
+  const draggingRef = useRef(false);
+  const dragRef = useRef({ x: 0, left: 0 });
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /* ── Auto-scroll ── */
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) return; // 无障碍：尊重用户偏好
+
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const tick = () => {
+      if (!pausedRef.current && !draggingRef.current) {
+        el.scrollLeft += speed * dirRef.current;
+
+        // 弹跳：触边反转
+        if (el.scrollLeft >= el.scrollWidth - el.clientWidth - 1) {
+          dirRef.current = -1;
+        } else if (el.scrollLeft <= 0) {
+          dirRef.current = 1;
+        }
+      }
+      animRef.current = requestAnimationFrame(tick);
+    };
+
+    animRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animRef.current);
+  }, [speed]);
+
+  /* ── Drag helpers ── */
+  const startDrag = useCallback((x: number) => {
+    draggingRef.current = true;
+    dragRef.current = { x, left: scrollRef.current?.scrollLeft ?? 0 };
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+  }, []);
+
+  const moveDrag = useCallback((x: number) => {
+    if (!draggingRef.current || !scrollRef.current) return;
+    const dx = x - dragRef.current.x;
+    scrollRef.current.scrollLeft = dragRef.current.left - dx;
+    dirRef.current = dx > 0 ? -1 : 1; // 拖拽方向 → 续动方向
+  }, []);
+
+  const endDrag = useCallback(() => {
+    draggingRef.current = false;
+    // 拖拽结束 800ms 后恢复自动滚动
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    resumeTimerRef.current = setTimeout(() => {
+      /* 自动恢复 */
+    }, 800);
+  }, []);
+
+  /* ── Nav arrows ── */
+  const [showLeft, setShowLeft] = useState(false);
+  const [showRight, setShowRight] = useState(true);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const obs = new ResizeObserver(() => {
+      setShowLeft(el.scrollLeft > 20);
+      setShowRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 20);
+    });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const scrollNav = useCallback(
+    (delta: number) => {
+      scrollRef.current?.scrollBy({ left: delta, behavior: "smooth" });
+      dirRef.current = delta > 0 ? 1 : -1;
+    },
+    [],
+  );
+
+  return (
+    <div className={`relative group/row ${className}`}>
+      {/* 左侧淡出 */}
+      <div
+        className="pointer-events-none absolute left-0 inset-y-0 w-10 md:w-16 z-10 transition-opacity duration-300"
+        style={{
+          background: "linear-gradient(to right, var(--bg-elevated), transparent)",
+          opacity: showLeft ? 1 : 0,
+        }}
+      />
+      {/* 右侧淡出 */}
+      <div
+        className="pointer-events-none absolute right-0 inset-y-0 w-10 md:w-16 z-10 transition-opacity duration-300"
+        style={{
+          background: "linear-gradient(to left, var(--bg-elevated), transparent)",
+          opacity: showRight ? 1 : 0,
+        }}
+      />
+
+      {/* 左箭头 */}
+      {showLeft && (
+        <button
+          type="button"
+          className="absolute left-1 md:left-2 top-1/2 -translate-y-1/2 z-20 h-7 w-7 rounded-full flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-orange)]"
+          style={{
+            background: "var(--bg-elevated)",
+            border: "1px solid var(--border-subtle)",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+          }}
+          onClick={() => scrollNav(-260)}
+          aria-label="向左滚动"
+        >
+          <ChevronLeft className="h-3.5 w-3.5" style={{ color: "var(--text-secondary)" }} />
+        </button>
+      )}
+      {/* 右箭头 */}
+      {showRight && (
+        <button
+          type="button"
+          className="absolute right-1 md:right-2 top-1/2 -translate-y-1/2 z-20 h-7 w-7 rounded-full flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-orange)]"
+          style={{
+            background: "var(--bg-elevated)",
+            border: "1px solid var(--border-subtle)",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+          }}
+          onClick={() => scrollNav(260)}
+          aria-label="向右滚动"
+        >
+          <ChevronRight className="h-3.5 w-3.5" style={{ color: "var(--text-secondary)" }} />
+        </button>
+      )}
+
+      {/* Scroll 容器 */}
+      <div
+        ref={scrollRef}
+        className="flex items-center gap-2.5 overflow-x-auto scrollbar-hide py-2 cursor-grab active:cursor-grabbing select-none"
+        onMouseEnter={() => {
+          pausedRef.current = true;
+        }}
+        onMouseLeave={() => {
+          draggingRef.current = false;
+          pausedRef.current = false;
+        }}
+        onMouseDown={(e) => startDrag(e.pageX)}
+        onMouseMove={(e) => moveDrag(e.pageX)}
+        onMouseUp={endDrag}
+        onDragStart={(e) => e.preventDefault()}
+        onTouchStart={(e) => startDrag(e.touches[0].pageX)}
+        onTouchMove={(e) => moveDrag(e.touches[0].pageX)}
+        onTouchEnd={endDrag}
+        onScroll={() => {
+          const el = scrollRef.current;
+          if (!el) return;
+          setShowLeft(el.scrollLeft > 20);
+          setShowRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 20);
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   Skills — 主组件
+   ═══════════════════════════════════════════════════ */
 export function Skills() {
   return (
     <section
@@ -35,6 +304,7 @@ export function Skills() {
       style={{ background: "var(--bg-elevated)" }}
     >
       <div className="container-shell px-5 md:px-8 lg:px-12">
+        {/* ── Header ── */}
         <div className="reveal max-w-2xl">
           <p
             className="text-sm font-mono tracking-widest uppercase"
@@ -49,101 +319,77 @@ export function Skills() {
             className="mt-6 text-base md:text-lg leading-relaxed text-pretty"
             style={{ color: "var(--text-secondary)" }}
           >
-            5 大类共 28 项 · 主力 / 熟练 / 了解 三级熟练度 · 与最新 PDF 简历同步。
+            5 大类共 28 项 · 主力 / 熟练 / 了解 三级熟练度 · 与最新 PDF
+            简历同步。
           </p>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {SKILLS.map((group) => {
-            const Icon = ICONS[group.category] || Sparkles;
-            return (
-              <div
-                key={group.category}
-                className="reveal card-soft p-6 md:p-7"
-              >
-                <div className="flex items-center gap-2 mb-5">
-                  <div
-                    className="h-8 w-8 rounded-full flex items-center justify-center shrink-0"
-                    style={{
-                      background: "var(--bg-base)",
-                      border: "1px solid var(--border-subtle)",
-                    }}
-                  >
-                    <Icon
-                      className="h-4 w-4"
-                      style={{ color: "var(--brand-orange)" }}
-                    />
-                  </div>
-                  <h3
-                    className="font-display text-base font-semibold"
-                    style={{ color: "var(--text-primary)" }}
-                  >
-                    {group.category}
-                  </h3>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {group.items.map((skill) => {
-                    const style = PRIORITY_STYLES[skill.priority];
-                    return (
-                      <span
-                        key={skill.name}
-                        className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-transform hover:-translate-y-0.5"
-                        style={{
-                          background: style.bg,
-                          color: style.text,
-                          border: `1px solid ${style.border}`,
-                        }}
-                        title={skill.usage ? `${skill.name}（${skill.usage}）` : skill.name}
-                      >
-                        <span className="font-mono">{skill.name}</span>
-                        {skill.usage && (
-                          <span
-                            className="text-[10px] opacity-80"
-                            style={{
-                              color:
-                                skill.priority === "主力"
-                                  ? "rgba(255,255,255,0.85)"
-                                  : "var(--text-tertiary)",
-                            }}
-                          >
-                            · {skill.usage}
-                          </span>
-                        )}
-                        <span
-                          className="ml-1 text-[10px] font-mono px-1.5 py-0.5 rounded-full"
-                          style={{
-                            background:
-                              skill.priority === "主力"
-                                ? "rgba(255,255,255,0.22)"
-                                : skill.priority === "熟练"
-                                ? "rgba(232, 119, 35, 0.10)"
-                                : "var(--bg-base)",
-                            color:
-                              skill.priority === "主力"
-                                ? "#FFFFFF"
-                                : skill.priority === "熟练"
-                                ? "var(--brand-orange)"
-                                : "var(--text-tertiary)",
-                          }}
-                        >
-                          {skill.priority}
-                        </span>
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
+        {/* ── 水平滚动区 ── */}
+        <div className="mt-12 space-y-3">
+          {/* 第一行：AI Agent + 技术 + 用户运营 */}
+          <ScrollRow speed={0.5} initialDir={1}>
+            {renderGroup(0)}
+            {renderSep()}
+            {renderGroup(1)}
+            {renderSep()}
+            {renderGroup(3)}
+          </ScrollRow>
+
+          {/* 第二行：大模型 + 电商工具 */}
+          <ScrollRow speed={0.35} initialDir={-1}>
+            {renderGroup(2)}
+            {renderSep()}
+            {renderGroup(4)}
+          </ScrollRow>
         </div>
 
-        {/* 教育背景 */}
+        {/* ── 滚动提示 ── */}
+        <p
+          className="mt-5 text-center text-xs"
+          style={{ color: "var(--text-muted)" }}
+        >
+          ← 悬停暂停 · 拖拽滑动 · 点击箭头导航 →
+        </p>
+
+        {/* ── 教育背景 ── */}
         <Education />
       </div>
     </section>
   );
 }
 
+/* ── 渲染辅助 ── */
+function renderGroup(idx: number) {
+  const group = SKILLS[idx];
+  return (
+    <Fragment key={group.category}>
+      <CategoryHeader category={group.category} />
+      {group.items.map((skill) => (
+        <SkillTag
+          key={skill.name}
+          name={skill.name}
+          priority={skill.priority}
+          usage={skill.usage}
+        />
+      ))}
+    </Fragment>
+  );
+}
+
+function renderSep() {
+  return (
+    <span
+      className="shrink-0 mx-1 text-sm select-none"
+      style={{ color: "var(--border-strong)" }}
+    >
+      ◆
+    </span>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   Education — 教育背景（不变）
+   ═══════════════════════════════════════════════════ */
 function Education() {
   return (
     <div
