@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
 import { Hero } from "./components/Hero";
 import { About } from "./components/About";
@@ -8,6 +8,14 @@ import { Projects } from "./components/Projects";
 import { Evidence } from "./components/Evidence";
 import { Contact } from "./components/Contact";
 import { ProjectDetailPage } from "./pages/ProjectDetailPage";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 function PortfolioHome() {
   // 滚动渐入
@@ -65,10 +73,13 @@ function PortfolioHome() {
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<PortfolioHome />} />
-      <Route path="/projects/:slug" element={<ProjectDetailPage />} />
-    </Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<PortfolioHome />} />
+        <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+      </Routes>
+    </>
   );
 }
 
